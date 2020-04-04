@@ -22,7 +22,7 @@ def stats(os, environment):
     if(os):
         click.echo(f"OS: {sys.platform}")
     if(environment):
-       click.echo(f"Environment: {retrieve_environment()}")
+       click.echo(f"Environment: {retrieve_environment()}") 
 
 @amb.command()
 def launch():
