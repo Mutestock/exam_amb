@@ -1,0 +1,32 @@
+workflow:
+
+    interfaces - zope.template
+    CI - Github actions
+    testing - nose2 via github actions & poetry
+    venv - poetry
+    dependency management - poetry
+    docs - sphinx:
+        new:
+            sphinx-quickstart
+            press enter a lot
+            write package names etc
+            go to conf.py
+                under extension - sphinx.ext.autodoc
+                outcomment:
+                    import os
+                    import sys
+                    sys.path.insert(0, os.path.abspath('..'))
+                    change ('.') to ('..')
+                    change html theme to sphinx_rtd_theme
+            sphinx-apidoc -o . ..
+            make html
+        update:
+            make html
+
+
+
+    server:
+        Confidential
+        Flask
+
+    sphinx
