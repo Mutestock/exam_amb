@@ -1,0 +1,13 @@
+workflow:
+
+    interfaces - zope.template
+    CI - Github actions
+    testing - nose2 via github actions & poetry
+    venv - poetry
+    dependency management - poetry
+
+
+    server:
+        Confidential
+        Flask
+
