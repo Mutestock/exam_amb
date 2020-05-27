@@ -1,0 +1,31 @@
+#:kivy 1.11.1 
+<RootWidget>:
+    name: 'base'
+    oritentation:'vertical'
+    canvas.after:
+        Color:
+            rgba: 0,0,1,1
+    size_hint: 1, 1
+    pos_hint: {'center_x': .5, 'center_y': .5}
+    do_default_tab: False
+
+    Button:
+        text: "boop"
+
+    TabbedPanelItem:
+        text: 'first tab'
+        Label:
+            text: 'First tab content area'
+    TabbedPanelItem:
+        text: 'tab2'
+        BoxLayout:
+            Label:
+                text: 'Second tab content area'
+            Button:
+                text: 'Button that does nothing'
+    TabbedPanelItem:
+        text: 'tab3'
+        RstDocument:
+            text:
+                '\\n'.join(("Hello world", "-----------",
+                "You are in the third tab."))

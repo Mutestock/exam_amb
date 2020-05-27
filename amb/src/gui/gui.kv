@@ -1,0 +1,72 @@
+#:kivy 1.11.1
+
+<ConfigurationPopup>:
+    title: root.popup_name
+    size_hint: None, None
+    size: 259, 200
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: "vertical"
+        TextInput:
+            id: txtinput
+            text: root.obj_text
+            size_hint_y: 0.2
+        Button:
+            size_hint: 1, 0.2
+            text: "Save Changes"
+            on_release:
+                root.obj.update_changes(txtinput.text)
+                root.dismiss()
+        Button:
+            size_hint: 1, 0.2
+            text: "Cancel Changes"
+            on_release: root.dismiss()
+
+<SelectableButton>:
+    # Draw a background to indicate selection
+    canvas.before:
+        Color:
+            rgba: (.0, 0.9, .1, .3) if self.selected else (0, 0, 0, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<RV>:
+    BoxLayout:
+        orientation: 'vertical'
+        GridLayout:
+            size_hint: 1, None
+            #size_hint_y: None
+            height: 25
+            cols: root.track_object_size
+            Label:
+                id: "id__label_name"
+                text: "Name"
+            Label:
+                id: "id_label_moneural"
+                text: "Moneural"    
+            Label:
+                id: "id_label_interval"
+                text: "Interval"
+            Label:
+                id: "id_label_volume"
+                text: "Volume"
+            Label:
+                test: ""
+        BoxLayout:
+            RecycleView:
+                viewclass: "SelectableButton"
+                data: [{'text': str(x)} for x in root.data_items]
+                SelectableRecycleGridLayout:
+                    cols: root.track_object_size
+                    default_size: None, dp(26)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: "vertical"
+                    multiselect: True
+                    touch_nultiselect: True
+
+
+    

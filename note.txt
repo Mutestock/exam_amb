@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-workflow:
-
-    interfaces - zope.template
-    CI - Github actions
-    testing - nose2 via github actions & poetry
-    venv - poetry
-    dependency management - poetry
-
-
-    server:
-        Confidential
-        Flask
-
-=======
 workflow:
 
     interfaces - zope.template
@@ -45,4 +30,3 @@ workflow:
         Flask
 
     sphinx
->>>>>>> e16d134dc5e4b0987f6e8921165aa244df2e62f6
