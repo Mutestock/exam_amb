@@ -4,8 +4,10 @@ class Track:
         self.__genre = genre
         self.__duration = duration
         self.__configuration = configuration
-        if not "mode" in self.__configuration:
-            self.__configuration["mode"] = "Off"
+        if not "switch" in self.__configuration:
+            self.__configuration["switch"] = "Off"
+
+    #To do: Tags
 
     @staticmethod
     def get_property_count():
@@ -18,7 +20,7 @@ class Track:
 
     @staticmethod
     def get_track_attribute_name_by_index(index):
-        return ["Moneural", "Interval", "Volume"][index - 1]
+        return ["mono_stereo", "Interval", "Volume"][index - 1]
 
     @property
     def name(self):

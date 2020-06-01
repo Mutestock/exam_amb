@@ -12,15 +12,22 @@ from kivy.uix.recyclegridlayout import RecycleGridLayout
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.popup import Popup
-from amb.src.utilities.file_management import picklify
+import math
 
 try:
     import six.moves.cPickle as pickle
 except:
     import pickle
-
-
 from amb.src.entities.track import Track
+from amb.src.utilities.file_management import (
+    retrieve_pkl_object_list,
+    picklify_object_list,
+)
+from pathlib import Path
+from pprint import pprint
+
+# Delete later
+from amb.definitions import TEMP_DIR
 
 
 class ConfigurationPopup(Popup):
@@ -31,9 +38,6 @@ class ConfigurationPopup(Popup):
     def __init__(self, obj, **kwargs):
         super(ConfigurationPopup, self).__init__(**kwargs)
         self.obj = obj
-        self.popup_name = Track.get_track_attribute_name_by_index(
-            self.obj.index % Track.get_property_count()
-        )
         self.obj_text = obj.text
 
 
@@ -72,14 +76,61 @@ class SelectableButton(RecycleDataViewBehavior, Button):
     def on_press(self):
         if self.index % Track.get_property_count() == Track.get_property_count() - 1:
             # print(f"object variables: {self.index} {self.parent.parent.data[self.index+1-Track.get_property_count():self.index]}")
-            pass
+            # list_index =(self.index+1)/Track.get_property_count()
+            # data = retrieve_pkl_object_list()
+            # track = data[int(list_index)]
+            # track.configuration['switch'] = 'On'
+            # print(data[int(list_index)].configuration)
+            # picklify_object_list(data)
+            #           print(self.index)
+            # data = []
+            # list_index =(self.index+1)/Track.get_property_count()
+            # data = retrieve_pkl_object_list()
+            # track = data[int(list_index)]
+            # track.configuration['switch'] = 'On'
+            # print(data[int(list_index)].configuration)
+            # picklify_object_list(data)
+            # print("on off")
+            # self.parent.parent.data = data
+            # self.parent.parent.refresh_from_data()
+            # print("on off")
+            print("boop")
+            popup = ConfigurationPopup(self)
+            popup.dismiss()
         elif not self.index % Track.get_property_count() == 0:
             popup = ConfigurationPopup(self)
             popup.open()
 
     def update_changes(self, txt):
-        print()
-        self.text = txt
+        data = []
+
+        cell_nr = self.index
+        row_nr = math.floor((cell_nr + 1) / Track.get_property_count())
+        local_cell = (cell_nr - 1) % Track.get_property_count()
+
+        data = retrieve_pkl_object_list()
+
+        track = data[int(row_nr)]
+        to_change = list(track.configuration.keys())[local_cell]
+        track.configuration[to_change] = txt
+
+        picklify_object_list(data)
+
+        data2 = refreshed_track_data()
+
+        self.parent.parent.data = data2
+        self.parent.parent.refresh_from_data(data2)
+
+
+def refreshed_track_data():
+    requested_data = ["name", "moneural", "interval", "volume", "switch"]
+    data = []
+    for entry in retrieve_pkl_object_list():
+        data.append({"text": entry.name})
+        for key, value in entry.configuration.items():
+            if key in requested_data:
+                data.append({"text": value})
+    return data
 
 
 class RV(BoxLayout):
@@ -91,9 +142,8 @@ class RV(BoxLayout):
         self.get_tracks()
 
     def get_tracks(self):
-        track_list = []
-
         # Test data remove laster
+        track_list = []
         for _ in range(10):
             track_list.append(
                 Track(
@@ -123,13 +173,16 @@ class RV(BoxLayout):
                     {"moneural": "Mono", "interval": "Once", "volume": "3-50%"},
                 )
             )
+        # Delete after db
+        if not (Path.is_dir(Path(TEMP_DIR))):
+            picklify_object_list(track_list)
+        decoded_list = retrieve_pkl_object_list()
 
-        for entry in track_list:
+        for entry in decoded_list:
             self.data_items.append(entry.name)
             for value in entry.configuration.values():
+                print(value)
                 self.data_items.append(value)
-        print(track_list)
-        picklify(track_list)
 
 
 class guiApp(App):
