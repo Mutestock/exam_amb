@@ -1,13 +1,18 @@
+from amb.definitions import AUDIO_DIR
+
+
 class Track:
-    def __init__(self, name, genre, duration, configuration):
+    def __init__(self, name, genre, duration, configuration, extension="wav"):
         self.__name = name
         self.__genre = genre
         self.__duration = duration
+        self.__extension = extension
         self.__configuration = configuration
         if not "switch" in self.__configuration:
             self.__configuration["switch"] = "Off"
+        self.__path = f"{AUDIO_DIR}/{self.__genre}/{self.__name}.{self.__extension}"
 
-    #To do: Tags
+    # To do: Tags
 
     @staticmethod
     def get_property_count():
@@ -53,3 +58,11 @@ class Track:
     @configuration.setter
     def configuration(self, value):
         self.__configuration = value
+
+    @property
+    def extension(self):
+        return self.__extension
+
+    @extension.setter
+    def extension(self, value):
+        self.__extension = value

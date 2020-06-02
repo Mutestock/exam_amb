@@ -123,7 +123,7 @@ class SelectableButton(RecycleDataViewBehavior, Button):
 
 
 def refreshed_track_data():
-    requested_data = ["name", "moneural", "interval", "volume", "switch"]
+    requested_data = ["name", "mono_stereo", "interval", "volume", "switch"]
     data = []
     for entry in retrieve_pkl_object_list():
         data.append({"text": entry.name})
@@ -151,7 +151,7 @@ class RV(BoxLayout):
                     "forest",
                     12,
                     {
-                        "moneural": "Mono",
+                        "mono_stereo": "Mono",
                         "interval": "Random 23 - 40",
                         "volume": "100% ",
                     },
@@ -162,7 +162,7 @@ class RV(BoxLayout):
                     "river",
                     "forest",
                     9,
-                    {"moneural": "Stereo", "interval": "Loop", "volume": "14-50% "},
+                    {"mono_stereo": "Stereo", "interval": "Loop", "volume": "14-50% "},
                 )
             )
             track_list.append(
@@ -170,7 +170,7 @@ class RV(BoxLayout):
                     "Kazoo",
                     "annoying",
                     12,
-                    {"moneural": "Mono", "interval": "Once", "volume": "3-50%"},
+                    {"mono_stereo": "Mono", "interval": "Once", "volume": "3-50%"},
                 )
             )
         # Delete after db

@@ -64,7 +64,12 @@ class TrackConfig:
 
     @random_volume.setter
     def random_volume(self, value):
-        self.__random_volume = value
+        if len(value) == 2:
+            self.__random_volume = value
+        else:
+            raise ValueError(
+                f"random_volume setter takes a list containing exactly 2 elements{len(value)}"
+            )
 
     # Too many/few arguments exception
     @property
@@ -73,4 +78,9 @@ class TrackConfig:
 
     @random_interval.setter
     def random_interval(self, value):
-        self.__random_interval = value
+        if len(value) == 1:
+            self.__random_interval = value
+        else:
+            raise ValueError(
+                f"random_interval setter takes a list containing exactly 2 elements{len(value)}"
+            )
