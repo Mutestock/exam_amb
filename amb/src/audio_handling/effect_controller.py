@@ -7,6 +7,9 @@ import time
 from amb.src.entities.configuration import Configuration
 
 
+# Needs updates after database setup
+
+
 @zope.interface.implementer(IEffectController)
 class EffectController:
     def __init__(self, track_list):
@@ -15,6 +18,8 @@ class EffectController:
         pygame.mixer.init(channels=self.__channels)
 
     def play_all(self):
+        """[Plays all tracks from the list of tracks defined when instantiating the EffectController]
+        """
         for track in self.__track_list:
             self.load_track(track)
             interval = self.control_interval(track)
@@ -22,12 +27,23 @@ class EffectController:
             volume = self.control_volume(track)
             duration = track.duration
         (
-            lambda _interval, _fade_in, _volume, _duration: play_single(
+            lambda _interval, _fade_in, _volume, _duration: _play_single(
                 _interval, _fade_in, _volume, duration
             )
         )(interval, fade_in, volume, duration)
 
-    def play_single(self, interval, fade_in, volume, duration):
+    def _play_single(self, interval, fade_in, volume, duration):
+        """[Plays the track in question. This the functionality used by the 'play_all' function. Checks for fades, intervals, loops, etc.]
+
+        :param interval: [Integer]
+        :type interval: [type]
+        :param fade_in: [description]
+        :type fade_in: [type]
+        :param volume: [description]
+        :type volume: [type]
+        :param duration: [description]
+        :type duration: [type]
+        """
         repeatable = interval
         fade_in_modified = fade_in
         if fade_in != 0:

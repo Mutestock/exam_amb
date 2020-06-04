@@ -1,7 +1,7 @@
 from zope.interface import Interface, Attribute
 
 
-class IAudioController(Interface):
+class IEffectController(Interface):
     """[Interface for audio controller]
 
     :param Interface: [Zope Interface]

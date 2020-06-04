@@ -1,4 +1,9 @@
-class TrackConfig:
+from amb.src.connection.db_management import base
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+
+
+class Configuration(base):
     def __init__(
         self,
         mono_stereo="stereo",
@@ -16,6 +21,24 @@ class TrackConfig:
         self.__fade_end = fade_end
         self.__random_interval = random_interval
         self.__random_volume = random_volume
+
+    __tablename__ = "configuration"
+    id = Column("id", Integer, primary_key=True)
+    db_mono_stereo = Column("mono_stereo", String)
+    db_interval = Column("interval", Integer)
+    db_volume = Column("volume", Integer)
+    db_fade_beginning = Column("fade_beginning", Integer)
+    db_fade_end = Column("fade_end", Integer)
+    db_track_id = Column(Integer, ForeignKey("track.id"))
+    db_random_interval = relationship(
+        "RandomInterval", uselist=False, backref="configuration"
+    )
+    db_random_volume = relationship(
+        "RandomVolume", uselist=False, backref="configuration"
+    )
+
+    # random_interval=Column(Integer)
+    # random_volume=Column(Integer)
 
     @property
     def mono_stereo(self):

@@ -4,4 +4,4 @@ import unittest
 # Rename
 class TestAmbience(unittest.TestCase):
     def test_version(self):
-        self.assertEquals(__version__, "0.1.0")
+        self.assertEquals(__version__, "0.2.0")
