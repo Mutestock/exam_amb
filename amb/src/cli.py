@@ -7,20 +7,22 @@ def amb():
 
 
 @amb.command()
-@click.option("--path", "-p", nargs=1)
-def add(path):
-    """[manually loads file into database and program audio folder]
-
-    :param path: [path to file]
-    :type path: [String]
+def add():
+    """[manually loads file into database and program audio folder. Uses prompts]
     """
-    print("????")
-    if path:
-        print("########")
-        print(path)
-        print(f"File extension = {path.split('.')}")
-        print(f"File extension = {path.split('.')[1]}")
-        print("########")
+    print("####")
+    print("You're attempting to add a track to the program directory")
+    print("Know that only .ogg and .wav sound formats are supported")
+    print("####")
+    path = click.prompt("Insert full track path with extension...")
+    print(path.split("."))
+    print(path.split(".")[1])
+    if path.split(".")[1] == "ogg" or path.split(".")[1] == "wav":
+        genre = click.prompt("Please define a genre for the track e.g. 'forest'")
+        print(f"{genre} was chosen.")
+    else:
+        print("Something went wrong with the input. Please check the extension")
+
         # try:
         #    if path.split(".")[1] == ".ogg" or path.split(".")[1] == ".wav":
         #        print(f"Track successfully recognized on path: {path} ")

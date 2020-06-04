@@ -1,5 +1,5 @@
 import unittest
-from amb.src.connection.db_management import initialize, create_all
+from amb.src.connection.db_management import initialize
 from amb.src.entities.track import Track
 from amb.src.entities.configuration import Configuration
 from amb.src.entities.random_interval import RandomInterval
@@ -38,6 +38,7 @@ class TestConnection(unittest.TestCase):
 
     @db_decorator
     def test_table_basic_creation(self, engine=None, base=None):
-        create_all(engine)
+        base.metadata.create_all(bind=engine)
+        # create_all(engine)
         res = engine.execute("SELECT * FROM Track")
         self.assertIsNotNone(res)

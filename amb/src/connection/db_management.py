@@ -2,6 +2,10 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils import database_exists, create_database
 from pathlib import Path
+
+# Entities seem to initialize upon import so:
+from amb.src.entities import *
+
 import os
 import re
 
@@ -33,17 +37,18 @@ def initialize(db_path=Path.cwd(), db_name="amb.db"):
 
 
 def create_db_if_non_existant(engine):
-    path = Path(f"{Path.cwd()}/amb.db")
+    """[Creates database if it doesn't exist. Checks for engine url. Database utilized is local]
+
+    :param engine: [description]
+    :type engine: [type]
+    """
     if not database_exists(engine.url):
         try:
             print("db did not exist. Attempting spawn")
             create_database(engine.url)
+            base.metadata.create_all(bind=engine)
         except Exception as err:
             print(f"Could not create missing database: Error code: \n {err}")
-
-
-def create_all(engine):
-    base.metadata.create_all(bind=engine)
 
 
 # Manual testing. Delete me
