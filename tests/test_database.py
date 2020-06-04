@@ -19,7 +19,9 @@ def db_decorator(func):
         func(*args, **kwargs, engine=engine, base=base)
         Path.unlink(file_path)
         return
+
     return wrapper
+
 
 class TestConnection(unittest.TestCase):
 

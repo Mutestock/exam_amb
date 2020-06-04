@@ -21,7 +21,7 @@ def add(path):
         print(f"File extension = {path.split('.')}")
         print(f"File extension = {path.split('.')[1]}")
         print("########")
-        #try:
+        # try:
         #    if path.split(".")[1] == ".ogg" or path.split(".")[1] == ".wav":
         #        print(f"Track successfully recognized on path: {path} ")
         #        genre = click.prompt('Which genre would you classify this as (Example: Forest)')
@@ -31,17 +31,17 @@ def add(path):
         #        print(path.split('.')[0])
         #        err_msg = f"This program only supports files of the extensions: '.ogg', '.wav'. The inserted file had the extension {path.split(".")}"
         #        raise ValueError(err_msg)
-        #except Exception as err:
+        # except Exception as err:
         #    print(err)
 
+
 @amb.command()
-@click.option("--asdf",'-a')
+@click.option("--asdf", "-a")
 def thing(asdf):
     if asdf:
         print("cake")
     else:
         print("wat")
-
 
 
 @amb.command()
@@ -51,9 +51,10 @@ def play(name):
 
     :param name: [Track file name]
     :type name: [str]
-    """    
+    """
     if path:
         pass
+
 
 if __name__ == "__main__":
     amb()
