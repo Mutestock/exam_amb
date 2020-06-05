@@ -12,6 +12,12 @@ import os
 
 
 def db_decorator(func):
+    """[Simple decorator which acts as a before each / after each database creation and dropping]
+
+    :param func: [function to wrap around]
+    :type func: [Function]
+    """
+
     def wrapper(*args, **kwargs):
         check_path = Path.cwd()
         file_path = Path(f"{check_path}/temp_test_db.db")
@@ -42,3 +48,55 @@ class TestConnection(unittest.TestCase):
         # create_all(engine)
         res = engine.execute("SELECT * FROM Track")
         self.assertIsNotNone(res)
+
+    #### Entity relation tests ####
+
+    @db_decorator
+    def test_track_basic_creation(self, engine=None, base=None):
+        pass
+
+    @db_decorator
+    def test_configuration_basic_creation(self, engine=None, base=None):
+        pass
+
+    @db_decorator
+    def test_track_configuration_creation(self, engine=None, base=None):
+        pass
+
+    @db_decorator
+    def test_configuration_random_creation(self, engine=None, base=None):
+        pass
+
+    @db_decorator
+    def test_playlist_track_creation(self, engine=None, base=None):
+        pass
+
+    @db_decorator
+    def test_playlist_track_configuration_creation(self, engine=None, base=None):
+        pass
+
+    @db_decorator
+    def test_track_create(self, engine=None, base=None):
+        pass
+
+    @db_decorator
+    def test_track_create(self, engine=None, base=None):
+        pass
+
+    @db_decorator
+    def test_user_playlist_creation(self, engine=None, base=None):
+        pass
+
+    @db_decorator
+    def test_user_playlist_track_creation(self, engine=None, base=None):
+        pass
+
+    @db_decorator
+    def test_user_playlist_track_configuration_creation(self, engine=None, base=None):
+        pass
+
+    @db_decorator
+    def test_full_creation(self, engine=None, base=None):
+        pass
+
+    ####
