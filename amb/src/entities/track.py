@@ -20,7 +20,12 @@ class Track(base):
     db_name = Column("name", String, unique=True)
     db_genre = Column("genre", String)
     db_extension = Column("extension", String)
-    db_configuration = relationship("Configuration", uselist=False, backref="track")
+    db_configuration = relationship(
+        "Configuration",
+        uselist=False,
+        backref="track",
+        cascade="all, delete, delete-orphan",
+    )
     db_playlist_id = Column(Integer, ForeignKey("track.id"))
 
     # To do: Tags

@@ -2,6 +2,8 @@ from amb.src.connection.db_management import base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
+# Many to many?
+
 
 class Playlist(base):
     def __init__(self, track_list, name):

@@ -19,7 +19,7 @@ class User(base):
     id = Column("id", Integer, primary_key=True)
     db_name = Column("name", String, unique=True)
     db_password = Column("password", String)
-    db_playlist = relationship("Playlist")
+    db_playlist = relationship("Playlist", cascade="all, delete, delete-orphan")
 
     @property
     def name(self):
