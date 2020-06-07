@@ -1,4 +1,3 @@
-
 import pygame
 from amb.src.entities.track import Track
 from amb.src.entities.configuration import Configuration
@@ -14,22 +13,26 @@ if __name__ == "__main__":
         genre="forest",
         duration=12,
         extension="ogg",
-        configuration=Configuration(interval="loop", random_interval=[2, 13], random_volume=[55, 75]),
+        configuration=Configuration(
+            interval="loop", random_interval=[2, 13], random_volume=[55, 75]
+        ),
     )
     serenity = Track(
         name="KR-Serenity",
         genre="forest",
         duration=12,
         extension="ogg",
-        configuration=Configuration(interval="loop", random_interval=[2, 13], random_volume=[55, 75]),
+        configuration=Configuration(
+            interval="loop", random_interval=[2, 13], random_volume=[55, 75]
+        ),
     )
-    level8.channel=1
-    serenity.channel=2
+    level8.channel = 1
+    serenity.channel = 2
 
-    #track_path = Path(f"{AUDIO_DIR}\{track.genre}\{track.name}.{track.extension}")
-    #if not Path.is_file(Path(track_path)):
+    # track_path = Path(f"{AUDIO_DIR}\{track.genre}\{track.name}.{track.extension}")
+    # if not Path.is_file(Path(track_path)):
     #    raise FileNotFoundError()
-    #print(track_path)
+    # print(track_path)
     p1 = str(Path(f"{AUDIO_DIR}\{level8.genre}\{level8.name}.{level8.extension}"))
     if not Path.is_file(Path(p1)):
         raise FileNotFoundError()

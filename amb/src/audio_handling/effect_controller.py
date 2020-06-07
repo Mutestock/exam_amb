@@ -11,6 +11,7 @@ from time import sleep
 
 # Needs updates after database setup
 
+
 @zope.interface.implementer(IEffectController)
 class EffectController:
     def __init__(self, track_list):
@@ -64,12 +65,13 @@ class EffectController:
             pygame.mixer.music.play(fade_ms=fade_modified)
         else:
             print("playing loops")
-            #pygame.mixer.music.play(loops=interval)
+            # pygame.mixer.music.play(loops=interval)
             p = str(Path(f"{AUDIO_DIR}\{track.genre}\{track.name}.{track.extension}"))
             s = pygame.mixer.Sound(p)
             s.play()
             print(track.channel)
             pygame.mixer.Channel(track.channel).play(s, loops=interval)
+
     def control_mono_stereo(self,):
         raise NotImplementedError
 
@@ -144,39 +146,42 @@ class EffectController:
     def load_track(self, track):
         print("loading...")
         track_path = Path(f"{AUDIO_DIR}\{track.genre}\{track.name}.{track.extension}")
-        
+
         if not Path.is_file(Path(track_path)):
             print(f"failed track path: {track_path}")
             raise FileNotFoundError()
         print(track_path)
         pygame.mixer.music.load(str(track_path))
-        #clock = pygame.time.Clock()
-        #clock.tick(10)
-        
+        # clock = pygame.time.Clock()
+        # clock.tick(10)
 
 
 if __name__ == "__main__":
-    '''
+    """
     For manual testing.
     Please note that without the sleep, then the program will exit and all sounds will end
 
-    '''
+    """
     level8 = Track(
         name="Level8",
         genre="forest",
         duration=12,
         extension="ogg",
-        configuration=Configuration(interval="loop", random_interval=[2, 13], random_volume=[55, 75]),
+        configuration=Configuration(
+            interval="loop", random_interval=[2, 13], random_volume=[55, 75]
+        ),
     )
     serenity = Track(
         name="KR-Serenity",
         genre="forest",
         duration=12,
         extension="ogg",
-        configuration=Configuration(interval="loop", random_interval=[2, 13], random_volume=[55, 75]),
+        configuration=Configuration(
+            interval="loop", random_interval=[2, 13], random_volume=[55, 75]
+        ),
     )
-    level8.channel=2
-    serenity.channel=4
+    level8.channel = 2
+    serenity.channel = 4
 
     track_list = [level8, serenity]
     ec = EffectController(track_list)

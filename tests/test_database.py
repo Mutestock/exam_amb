@@ -23,15 +23,13 @@ def db_decorator(func):
         file_path = Path(f"{check_path}/temp_test_db.db")
         base, engine = initialize(db_path=check_path, db_name="temp_test_db.db")
         func(*args, **kwargs, engine=engine, base=base)
-        #Path.unlink(file_path)
+        # Path.unlink(file_path)
         return
 
     return wrapper
 
 
 class TestConnection(unittest.TestCase):
-
-
     def test_initialize(self):
         check_path = Path.cwd()
         file_path = Path(f"{check_path}/temp_test_db.db")
@@ -52,11 +50,7 @@ class TestConnection(unittest.TestCase):
     def test_track_basic_creation(self, engine=None, base=None):
 
         c = Configuration(
-            mono_stereo="stereo",
-            interval=14,
-            volume=100,
-            fade_beginning=0,
-            fade_end=0, 
+            mono_stereo="stereo", interval=14, volume=100, fade_beginning=0, fade_end=0,
         )
         create(c, engine=engine)
         t = Track(
@@ -70,56 +64,57 @@ class TestConnection(unittest.TestCase):
         t.db_genre = t.genre
         t.db_extension = t.extension
         print(f"Engine: {engine}")
-        
+
         create(t, engine=engine)
-        #t_read = read(1, engine=engine)
+        # t_read = read(1, engine=engine)
         all = read_all(Track, engine=engine)
         print(all)
 
+    # @db_decorator
+    # def test_configuration_basic_creation(self, engine=None, base=None):
+    #    pass
 
-    #@db_decorator
-    #def test_configuration_basic_creation(self, engine=None, base=None):
-    #    pass
+
 #
-    #@db_decorator
-    #def test_track_configuration_creation(self, engine=None, base=None):
-    #    pass
+# @db_decorator
+# def test_track_configuration_creation(self, engine=None, base=None):
+#    pass
 #
-    #@db_decorator
-    #def test_configuration_random_creation(self, engine=None, base=None):
-    #    pass
+# @db_decorator
+# def test_configuration_random_creation(self, engine=None, base=None):
+#    pass
 #
-    #@db_decorator
-    #def test_playlist_track_creation(self, engine=None, base=None):
-    #    pass
+# @db_decorator
+# def test_playlist_track_creation(self, engine=None, base=None):
+#    pass
 #
-    #@db_decorator
-    #def test_playlist_track_configuration_creation(self, engine=None, base=None):
-    #    pass
+# @db_decorator
+# def test_playlist_track_configuration_creation(self, engine=None, base=None):
+#    pass
 #
-    #@db_decorator
-    #def test_track_create(self, engine=None, base=None):
-    #    pass
+# @db_decorator
+# def test_track_create(self, engine=None, base=None):
+#    pass
 #
-    #@db_decorator
-    #def test_track_create(self, engine=None, base=None):
-    #    pass
+# @db_decorator
+# def test_track_create(self, engine=None, base=None):
+#    pass
 #
-    #@db_decorator
-    #def test_user_playlist_creation(self, engine=None, base=None):
-    #    pass
+# @db_decorator
+# def test_user_playlist_creation(self, engine=None, base=None):
+#    pass
 #
-    #@db_decorator
-    #def test_user_playlist_track_creation(self, engine=None, base=None):
-    #    pass
+# @db_decorator
+# def test_user_playlist_track_creation(self, engine=None, base=None):
+#    pass
 #
-    #@db_decorator
-    #def test_user_playlist_track_configuration_creation(self, engine=None, base=None):
-    #    pass
+# @db_decorator
+# def test_user_playlist_track_configuration_creation(self, engine=None, base=None):
+#    pass
 #
-    #@db_decorator
-    #def test_full_creation(self, engine=None, base=None):
-    #    pass
+# @db_decorator
+# def test_full_creation(self, engine=None, base=None):
+#    pass
 #
-    #####
+#####
 #

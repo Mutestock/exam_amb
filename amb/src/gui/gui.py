@@ -25,6 +25,7 @@ from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.popup import Popup
 
 import math
+
 try:
     import six.moves.cPickle as pickle
 except:
@@ -32,7 +33,6 @@ except:
 
 from pathlib import Path
 from pprint import pprint
-
 
 
 class ConfigurationPopup(Popup):
@@ -52,6 +52,7 @@ class SelectableRecycleGridLayout(
     pass
     """ Adds selection and focus behaviour to the view. """
 
+
 class PlayAllButton(Button):
     def on_press(self):
         print("meeee")
@@ -60,6 +61,7 @@ class PlayAllButton(Button):
             print(t.name)
         ec = EffectController(track_list)
         ec.play_all()
+
 
 class SelectableButton(RecycleDataViewBehavior, Button):
     """ Add selection support to the Button """
@@ -148,7 +150,7 @@ def refreshed_track_data():
 
 class RV(BoxLayout):
     data_items = ListProperty([])
-    track_object_size= 10
+    track_object_size = 10
 
     def __init__(self, **kwargs):
         super(RV, self).__init__(**kwargs)
@@ -164,13 +166,9 @@ class RV(BoxLayout):
             fade_beginning=23,
             fade_end=12,
         )
-        
-        t1 =Track(
-            name="Level8",
-            genre="forest",
-            duration=12,
-            configuration=c,
-            extension='ogg'
+
+        t1 = Track(
+            name="Level8", genre="forest", duration=12, configuration=c, extension="ogg"
         )
 
         t2 = Track(
@@ -178,10 +176,10 @@ class RV(BoxLayout):
             genre="forest",
             duration=9,
             configuration=c,
-            extension='ogg',
+            extension="ogg",
         )
-        t1.channel=2
-        t2.channel=4
+        t1.channel = 2
+        t2.channel = 4
         track_list.append(t1)
         track_list.append(t2)
         # Delete after db
@@ -194,8 +192,10 @@ class RV(BoxLayout):
                 print(value)
                 self.data_items.append(value)
                 print(len(entry.configuration.__dict__.values()))
-                track_object_size = len(decoded_list)+len(entry.configuration.__dict__.values())
-                
+                track_object_size = len(decoded_list) + len(
+                    entry.configuration.__dict__.values()
+                )
+
 
 class guiApp(App):
     title = "Ambience Player"

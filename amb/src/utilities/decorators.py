@@ -15,7 +15,7 @@ def session_handler(engine=None):
         def wrapper(*args, engine):
             print(engine)
             session = sessionmaker(bind=engine)()
-            #print(f"Args 0 = {args[0]} ")
+            # print(f"Args 0 = {args[0]} ")
             if func.__name__ == "create":
                 entity = args[0]
                 session.add(entity)
