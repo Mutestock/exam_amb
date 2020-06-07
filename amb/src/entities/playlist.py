@@ -1,6 +1,8 @@
 from amb.src.connection.db_management import base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from amb.src.entities.playlist_track_association import association_table
+from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
+
 
 # Many to many?
 
@@ -13,7 +15,7 @@ class Playlist(base):
     __tablename__ = "playlist"
     id = Column("id", Integer, primary_key=True)
     db_name = Column("name", String, unique=True)
-    db_track = relationship("Track")
+    db_track = relationship("Track", secondary=association_table, backref="playlist")
     user_id = Column(Integer, ForeignKey("user.id"))
 
     @property

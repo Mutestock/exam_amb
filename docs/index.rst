@@ -7,9 +7,10 @@ Welcome to amb's documentation!
 ===============================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
+   amb
    modules
 
 Indices and tables

@@ -2,6 +2,7 @@ from amb.definitions import AUDIO_DIR
 from amb.src.connection.db_management import base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+from amb.src.entities.playlist_track_association import association_table
 
 
 class Track(base):
@@ -11,8 +12,6 @@ class Track(base):
         self.__duration = duration
         self.__extension = extension
         self.__configuration = configuration
-        if not "switch" in self.__configuration:
-            self.__configuration["switch"] = "Off"
         self.__path = f"{AUDIO_DIR}/{self.__genre}/{self.__name}.{self.__extension}"
 
     __tablename__ = "track"
@@ -26,7 +25,8 @@ class Track(base):
         backref="track",
         cascade="all, delete, delete-orphan",
     )
-    db_playlist_id = Column(Integer, ForeignKey("track.id"))
+
+    # db_playlist_id = Column(Integer, ForeignKey("track.id"))
 
     # To do: Tags
 

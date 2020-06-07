@@ -1,7 +1,9 @@
 from sqlalchemy.orm import sessionmaker
+from amb.src.connection.db_management import initialize
+import functools
 
 
-def session_handler(engine):
+def session_handler(engine=None):
     """[Resolves all basic database session queries]
 
     :param engine: [Sqlalchemy engine object to bind sessionmaker]
@@ -9,31 +11,36 @@ def session_handler(engine):
     """
 
     def func_decorator(func):
-        def wrapper(*args, **kwargs):
+        @functools.wraps(func)
+        def wrapper(*args, engine):
+            print(engine)
             session = sessionmaker(bind=engine)()
-            print(f"Args 0 = {args[0]} ")
+            #print(f"Args 0 = {args[0]} ")
             if func.__name__ == "create":
                 entity = args[0]
                 session.add(entity)
-                session.commit(entity)
-                func(*args, **kwargs)
+                session.commit()
+                func(*args, engine)
             elif func.__name__ == "read":
                 search = args[0]
                 res = session.query(search)
-                func(*args, **kwargs, search=res)
+                func(*args, search=res)
             elif func.__name__ == "read_all":
-                entity_type = args[0]
-                res = session.query(entity_type).all()
-                func(*args, **kwargs, entity_type=res)
+                search = args[0]
+                res = session.query(search).all()
+                print(res)
+                func(*args, search=res)
             elif func.__name__ == "update":
                 entity = arg[0]
-                session.commit(entity)
-                func(*args, *kwargs, entity=entity)
+                session.commit()
+                func(*args, entity=entity)
             elif func.__name__ == "delete":
                 search = args[0]
                 session.query(search).delete()
-                func(*args, *kwargs, entity=entity)
+                func(*args, entity=entity)
             session.close()
-            return wrapper
+            return
 
-        return func_decorator
+        return wrapper
+
+    return func_decorator

@@ -1,3 +1,14 @@
+from amb.src.audio_handling.effect_controller import EffectController
+
+# Delete later
+from amb.definitions import TEMP_DIR
+from amb.src.entities.track import Track
+from amb.src.entities.configuration import Configuration
+from amb.src.utilities.file_management import (
+    retrieve_pkl_object_list,
+    picklify_object_list,
+)
+
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.recycleview.views import RecycleDataViewBehavior
@@ -12,22 +23,16 @@ from kivy.uix.recyclegridlayout import RecycleGridLayout
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.popup import Popup
-import math
 
+import math
 try:
     import six.moves.cPickle as pickle
 except:
     import pickle
-from amb.src.entities.track import Track
-from amb.src.utilities.file_management import (
-    retrieve_pkl_object_list,
-    picklify_object_list,
-)
+
 from pathlib import Path
 from pprint import pprint
 
-# Delete later
-from amb.definitions import TEMP_DIR
 
 
 class ConfigurationPopup(Popup):
@@ -47,6 +52,14 @@ class SelectableRecycleGridLayout(
     pass
     """ Adds selection and focus behaviour to the view. """
 
+class PlayAllButton(Button):
+    def on_press(self):
+        print("meeee")
+        track_list = retrieve_pkl_object_list()
+        for t in track_list:
+            print(t.name)
+        ec = EffectController(track_list)
+        ec.play_all()
 
 class SelectableButton(RecycleDataViewBehavior, Button):
     """ Add selection support to the Button """
@@ -111,7 +124,7 @@ class SelectableButton(RecycleDataViewBehavior, Button):
         data = retrieve_pkl_object_list()
 
         track = data[int(row_nr)]
-        to_change = list(track.configuration.keys())[local_cell]
+        to_change = list(track.configuration.__dict__.keys())[local_cell]
         track.configuration[to_change] = txt
 
         picklify_object_list(data)
@@ -127,7 +140,7 @@ def refreshed_track_data():
     data = []
     for entry in retrieve_pkl_object_list():
         data.append({"text": entry.name})
-        for key, value in entry.configuration.items():
+        for key, value in entry.configuration.__dict__.items():
             if key in requested_data:
                 data.append({"text": value})
     return data
@@ -135,7 +148,7 @@ def refreshed_track_data():
 
 class RV(BoxLayout):
     data_items = ListProperty([])
-    track_object_size = 5
+    track_object_size= 10
 
     def __init__(self, **kwargs):
         super(RV, self).__init__(**kwargs)
@@ -144,46 +157,45 @@ class RV(BoxLayout):
     def get_tracks(self):
         # Test data remove laster
         track_list = []
-        for _ in range(10):
-            track_list.append(
-                Track(
-                    "wind",
-                    "forest",
-                    12,
-                    {
-                        "mono_stereo": "Mono",
-                        "interval": "Random 23 - 40",
-                        "volume": "100% ",
-                    },
-                )
-            )
-            track_list.append(
-                Track(
-                    "river",
-                    "forest",
-                    9,
-                    {"mono_stereo": "Stereo", "interval": "Loop", "volume": "14-50% "},
-                )
-            )
-            track_list.append(
-                Track(
-                    "Kazoo",
-                    "annoying",
-                    12,
-                    {"mono_stereo": "Mono", "interval": "Once", "volume": "3-50%"},
-                )
-            )
+        c = Configuration(
+            mono_stereo="stereo",
+            interval="loop",
+            volume=95,
+            fade_beginning=23,
+            fade_end=12,
+        )
+        
+        t1 =Track(
+            name="Level8",
+            genre="forest",
+            duration=12,
+            configuration=c,
+            extension='ogg'
+        )
+
+        t2 = Track(
+            name="KR-Serenity",
+            genre="forest",
+            duration=9,
+            configuration=c,
+            extension='ogg',
+        )
+        t1.channel=2
+        t2.channel=4
+        track_list.append(t1)
+        track_list.append(t2)
         # Delete after db
         if not (Path.is_dir(Path(TEMP_DIR))):
             picklify_object_list(track_list)
         decoded_list = retrieve_pkl_object_list()
-
         for entry in decoded_list:
             self.data_items.append(entry.name)
-            for value in entry.configuration.values():
+            for value in entry.configuration.__dict__.values():
                 print(value)
                 self.data_items.append(value)
-
+                print(len(entry.configuration.__dict__.values()))
+                track_object_size = len(decoded_list)+len(entry.configuration.__dict__.values())
+                
 
 class guiApp(App):
     title = "Ambience Player"

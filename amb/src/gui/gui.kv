@@ -32,6 +32,11 @@
             pos: self.pos
             size: self.size
 
+<PlayAllButton>:
+    id: "id_play_all_button"
+    text: "play all"
+
+
 <RV>:
     BoxLayout:
         orientation: 'vertical'
@@ -52,8 +57,7 @@
             Label:
                 id: "id_label_volume"
                 text: "Volume"
-            Label:
-                test: ""
+            PlayAllButton:
         BoxLayout:
             RecycleView:
                 viewclass: "SelectableButton"

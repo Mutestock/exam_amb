@@ -12,6 +12,15 @@ import re
 
 base = declarative_base()
 
+# class EngineSingletonContainer(object):
+#    __instance = None
+#    def __call__(cls, *args, **kwargs):
+#        if __instance is None:
+#            db_path = str(db_path)
+#            db_path = db_path.replace("\\", "//")
+#            engine = create_engine(f"sqlite:///{db_path}/{db_name}", echo=True)
+#            cls.__instance = super(EngineSingletonContainer,engine).__call__()
+#        return __instance
 
 # Remember to turn echo off when stable
 def initialize(db_path=Path.cwd(), db_name="amb.db"):
@@ -28,8 +37,8 @@ def initialize(db_path=Path.cwd(), db_name="amb.db"):
     print(Path.cwd())
     db_path = str(db_path)
     db_path = db_path.replace("\\", "//")
-    engine = create_engine(f"sqlite:///{db_path}/{db_name}", echo=True)
-
+    engine = create_engine(f"sqlite:///{db_path}/{db_name}")
+    # engine = EngineSingletonContainer()
     # conn = engine.connect()
     create_db_if_non_existant(engine)
 
@@ -44,9 +53,11 @@ def create_db_if_non_existant(engine):
     """
     if not database_exists(engine.url):
         try:
-            print("db did not exist. Attempting spawn")
+            print("db did not exist. Creating...")
             create_database(engine.url)
+            print("DB created. Generating tables...")
             base.metadata.create_all(bind=engine)
+            print("Tables successfully generated")
         except Exception as err:
             print(f"Could not create missing database: Error code: \n {err}")
 

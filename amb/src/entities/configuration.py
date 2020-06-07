@@ -21,6 +21,7 @@ class Configuration(base):
         self.__fade_end = fade_end
         self.__random_interval = random_interval
         self.__random_volume = random_volume
+        self.__switch = "off"
 
     __tablename__ = "configuration"
     id = Column("id", Integer, primary_key=True)
@@ -30,12 +31,12 @@ class Configuration(base):
     db_fade_beginning = Column("fade_beginning", Integer)
     db_fade_end = Column("fade_end", Integer)
     db_track_id = Column(Integer, ForeignKey("track.id"))
-    db_random_interval = relationship(
-        "RandomInterval", uselist=False, backref="configuration"
-    )
-    db_random_volume = relationship(
-        "RandomVolume", uselist=False, backref="configuration"
-    )
+    #db_random_interval = relationship(
+    #    "RandomInterval", uselist=False, backref="configuration"
+    #)
+    #db_random_volume = relationship(
+    #    "RandomVolume", uselist=False, backref="configuration"
+    #)
 
     # random_interval=Column(Integer)
     # random_volume=Column(Integer)
