@@ -8,6 +8,8 @@ import time
 from amb.src.entities.configuration import Configuration
 from pathlib import Path
 from time import sleep
+#from amb.src.entities.configuration import Configuration
+from amb.src.facades.track_facade import *
 
 # Needs updates after database setup
 
@@ -40,11 +42,14 @@ class EffectController:
         :param duration: [description]
         :type duration: [type]
         """
-        interval = self.control_interval(track)
-        interval = self.control_interval(track)
-        fade_in = self.control_fade(track)
-        volume = self.control_volume(track)
-        duration = track.duration
+
+
+        c = read(Configuration, Configuration.db_track_id, track.id)
+
+        interval = self.control_interval(c)
+        fade_in = self.control_fade(c)
+        volume = self.control_volume(c)
+        duration = track.db_duration
 
         repeatable = interval
         fade_in_modified = fade_in
@@ -66,7 +71,7 @@ class EffectController:
         else:
             print("playing loops")
             # pygame.mixer.music.play(loops=interval)
-            p = str(Path(f"{AUDIO_DIR}\{track.genre}\{track.name}.{track.extension}"))
+            p = str(Path(f"{AUDIO_DIR}\{track.db_genre}\{track.db_name}.{track.db_extension}"))
             s = pygame.mixer.Sound(p)
             s.play()
             print(track.channel)
@@ -81,10 +86,10 @@ class EffectController:
     def _mono(self,):
         raise NotImplementedError
 
-    def control_volume(self, track):
+    def control_volume(self, c):
         volume = "0"
         try:
-            volume = float(track.configuration.volume) / 100
+            volume = float(c.db_volume) / 100
         except Exception as err:
             print(f"Failed to convert volume to float. Was {volume} Err: \n {err}")
         if volume > 1:
@@ -103,17 +108,17 @@ class EffectController:
     def _volume_mute(self,):
         raise NotImplementedError
 
-    def control_interval(self, track):
-        interval = track.configuration.interval
+    def control_interval(self, c):
+        interval = c.db_interval
         if interval == "loop":
             return -1
         elif interval == "single":
             return 1
         elif interval == "random":
-            return track.configuration.random_interval
+            raise NotImplementedError
         else:
             raise ValueError(
-                f"Illegal interval in control_interval: {track.configuration.interval}"
+                f"Illegal interval in control_interval: {interval}"
             )
 
     def _interval_random(self,):
@@ -128,10 +133,10 @@ class EffectController:
     def unload_all(self,):
         pygame.mixer.music.unload()
 
-    def control_fade(self, track):
+    def control_fade(self, c):
         fade_in = "0"
         try:
-            fade_in = float(track.configuration.fade_beginning)
+            fade_in = float(c.db_fade_beginning)
         except Exception as err:
             print(f"Failed to convert fade_in to float. Was {fade_in}")
         if fade_in > 100:
@@ -145,7 +150,7 @@ class EffectController:
 
     def load_track(self, track):
         print("loading...")
-        track_path = Path(f"{AUDIO_DIR}\{track.genre}\{track.name}.{track.extension}")
+        track_path = Path(f"{AUDIO_DIR}\{track.db_genre}\{track.db_name}.{track.db_extension}")
 
         if not Path.is_file(Path(track_path)):
             print(f"failed track path: {track_path}")

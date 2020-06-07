@@ -1,4 +1,4 @@
-from amb.src.connection.db_management import base
+from amb.src.connection.engine_creation import main_base as base, main_engine
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -7,7 +7,7 @@ class Configuration(base):
     def __init__(
         self,
         mono_stereo="stereo",
-        interval=0,
+        interval="loop",
         volume=100,
         fade_beginning=0,
         fade_end=0,
@@ -26,20 +26,18 @@ class Configuration(base):
     __tablename__ = "configuration"
     id = Column("id", Integer, primary_key=True)
     db_mono_stereo = Column("mono_stereo", String)
-    db_interval = Column("interval", Integer)
+    db_interval = Column("interval", String)
     db_volume = Column("volume", Integer)
     db_fade_beginning = Column("fade_beginning", Integer)
     db_fade_end = Column("fade_end", Integer)
     db_track_id = Column(Integer, ForeignKey("track.id"))
-    # db_random_interval = relationship(
-    #    "RandomInterval", uselist=False, backref="configuration"
-    # )
-    # db_random_volume = relationship(
-    #    "RandomVolume", uselist=False, backref="configuration"
-    # )
 
-    # random_interval=Column(Integer)
-    # random_volume=Column(Integer)
+    def associate_database_variables(self):
+        self.db_mono_stereo = self.__mono_stereo
+        self.db_interval = self.__interval
+        self.db_volume = self.__volume
+        self.db_fade_beginning = self.__fade_beginning
+        self.db_fade_end = self.__fade_end
 
     @property
     def mono_stereo(self):
@@ -108,3 +106,6 @@ class Configuration(base):
             raise ValueError(
                 f"random_interval setter takes a list containing exactly 2 elements{len(value)}"
             )
+
+
+base.metadata.create_all(bind=main_engine)

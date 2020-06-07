@@ -1,8 +1,9 @@
 from amb.definitions import AUDIO_DIR
-from amb.src.connection.db_management import base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from amb.src.connection.engine_creation import main_base as base, main_engine
+from sqlalchemy import Column, Integer, String, ForeignKey, MetaData
 from sqlalchemy.orm import relationship
-from amb.src.entities.playlist_track_association import association_table
+
+# from amb.src.entities import configuration
 
 
 class Track(base):
@@ -18,6 +19,7 @@ class Track(base):
     id = Column("id", Integer, primary_key=True)
     db_name = Column("name", String, unique=True)
     db_genre = Column("genre", String)
+    db_duration = Column("duration", Integer)
     db_extension = Column("extension", String)
     db_configuration = relationship(
         "Configuration",
@@ -26,9 +28,14 @@ class Track(base):
         cascade="all, delete, delete-orphan",
     )
 
-    # db_playlist_id = Column(Integer, ForeignKey("track.id"))
-
     # To do: Tags
+
+    def associate_database_variables(self):
+        self.db_name = self.__name
+        self.db_genre = self.__genre
+        self.db_duration = self.__duration
+        self.db_extension = self.__extension
+        self.db_configuration = self.__configuration
 
     @staticmethod
     def get_property_count():
@@ -82,3 +89,10 @@ class Track(base):
     @extension.setter
     def extension(self, value):
         self.__extension = value
+
+    @property
+    def path(self):
+        return self.__path
+
+
+base.metadata.create_all(bind=main_engine)

@@ -1,4 +1,6 @@
 from amb.src.audio_handling.effect_controller import EffectController
+from amb.src.facades.track_facade import *
+from amb.src.connection.db_management import amb_engine
 
 # Delete later
 from amb.definitions import TEMP_DIR
@@ -54,11 +56,12 @@ class SelectableRecycleGridLayout(
 
 
 class PlayAllButton(Button):
+
     def on_press(self):
         print("meeee")
         track_list = retrieve_pkl_object_list()
         for t in track_list:
-            print(t.name)
+            print(t.db_name)
         ec = EffectController(track_list)
         ec.play_all()
 
@@ -152,49 +155,36 @@ class RV(BoxLayout):
     data_items = ListProperty([])
     track_object_size = 10
 
+
     def __init__(self, **kwargs):
         super(RV, self).__init__(**kwargs)
         self.get_tracks()
 
     def get_tracks(self):
-        # Test data remove laster
-        track_list = []
-        c = Configuration(
-            mono_stereo="stereo",
-            interval="loop",
-            volume=95,
-            fade_beginning=23,
-            fade_end=12,
-        )
+        track_list = [track for track in read_all(Track)]
 
-        t1 = Track(
-            name="Level8", genre="forest", duration=12, configuration=c, extension="ogg"
-        )
+        for i,track in enumerate(track_list):
+            track.channel = (i*2)
 
-        t2 = Track(
-            name="KR-Serenity",
-            genre="forest",
-            duration=9,
-            configuration=c,
-            extension="ogg",
-        )
-        t1.channel = 2
-        t2.channel = 4
-        track_list.append(t1)
-        track_list.append(t2)
         # Delete after db
         if not (Path.is_dir(Path(TEMP_DIR))):
             picklify_object_list(track_list)
         decoded_list = retrieve_pkl_object_list()
         for entry in decoded_list:
-            self.data_items.append(entry.name)
-            for value in entry.configuration.__dict__.values():
-                print(value)
+            self.data_items.append(entry.db_name)
+            c = read(Configuration, Configuration.db_track_id, entry.id)
+            for value in c.__dict__.values():
                 self.data_items.append(value)
-                print(len(entry.configuration.__dict__.values()))
-                track_object_size = len(decoded_list) + len(
-                    entry.configuration.__dict__.values()
-                )
+
+
+
+            #for value in entry.configuration.__dict__.values():
+            #    print(value)
+            #    self.data_items.append(value)
+            #    print(len(entry.configuration.__dict__.values()))
+            #    track_object_size = len(decoded_list) + len(
+            #        entry.configuration.__dict__.values()
+            #    )
 
 
 class guiApp(App):

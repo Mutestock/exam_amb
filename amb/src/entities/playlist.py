@@ -1,10 +1,17 @@
-from amb.src.connection.db_management import base
-from amb.src.entities.playlist_track_association import association_table
+# from amb.src.connection.db_management import base
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
+from amb.src.connection.engine_creation import main_base as base, main_engine
 
 
 # Many to many?
+
+association_table = Table(
+    "association",
+    base.metadata,
+    Column("playlist_id", Integer, ForeignKey("playlist.id")),
+    Column("track_id", Integer, ForeignKey("track.id")),
+)
 
 
 class Playlist(base):
@@ -15,7 +22,7 @@ class Playlist(base):
     __tablename__ = "playlist"
     id = Column("id", Integer, primary_key=True)
     db_name = Column("name", String, unique=True)
-    db_track = relationship("Track", secondary=association_table, backref="playlist")
+    db_track = relationship("Track", secondary=association_table)
     user_id = Column(Integer, ForeignKey("user.id"))
 
     @property
@@ -33,3 +40,6 @@ class Playlist(base):
     @name.setter
     def name(self, value):
         self.__name = value
+
+
+base.metadata.create_all(bind=main_engine)
