@@ -1,4 +1,4 @@
-from amb.src.connection.db_management import base
+from amb.src.connection.engine_creation import main_base as base, main_engine
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -29,3 +29,6 @@ class RandomInterval(base):
     @random_max.setter
     def random_max(self, value):
         self.__random_max = value
+
+
+base.metadata.create_all(bind=main_engine)

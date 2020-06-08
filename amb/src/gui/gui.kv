@@ -36,28 +36,90 @@
     id: "id_play_all_button"
     text: "play all"
 
+<StopAllButton>:
+    id: "id_stop_all_button"
+    text: "stop all"
+
+<LoadFileButton>:
+    id: "id_load_button"
+    text: "load file"
+
+<GenrePopup>:
+    BoxLayout:
+        orientation:'vertical'
+        pos:root.pos
+        TextInput:
+            id: txtinput
+        Button:
+            text: "Submit"
+            on_release: root.text_input(txtinput.text)
+
+
+<LoadDialog>:
+    BoxLayout:
+        orientation: 'vertical'
+        pos:root.pos
+        FileChooserListView:
+            id: filechooser
+            path: '.'
+        
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: 'Cancel'
+                on_release: root.cancel()
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+<ToolBar>:
+    rows:1
+    LoadFileButton:
+    PlayAllButton:
+    StopAllButton:
+    
+
 
 <RV>:
     BoxLayout:
         orientation: 'vertical'
+        ToolBar:
+            size_hint:1, None
+            height:50
         GridLayout:
             size_hint: 1, None
-            #size_hint_y: None
             height: 25
             cols: root.track_object_size
             Label:
-                id: "id__label_name"
                 text: "Name"
             Label:
-                id: "id_label_moneural"
-                text: "Moneural"    
+                text: "Genre"
             Label:
-                id: "id_label_interval"
-                text: "Interval"
+                text: "Duration"
             Label:
-                id: "id_label_volume"
+                text: "Mono/Stereo"
+            Label:
+                text: "Interval"    
+            Label:
                 text: "Volume"
-            PlayAllButton:
+            Label:
+                text: "Fade Start"
+            Label:
+                text: "Fade End"
+            Label:
+                text:"R int max"
+            Label:
+                text:"R int min"
+            Label:
+                text:"R vol max"
+            Label:
+                text:"R vol min"
+            Label:
+                text:""
+
+
+
         BoxLayout:
             RecycleView:
                 viewclass: "SelectableButton"

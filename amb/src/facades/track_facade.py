@@ -1,8 +1,5 @@
-from zope.interface import implementer
-from amb.src.facades.ientity_facade import IEntityFacade
 from sqlalchemy.orm import sessionmaker
 from amb.src.utilities.decorators import session_handler
-
 
 
 @session_handler

@@ -11,16 +11,20 @@ class Configuration(base):
         volume=100,
         fade_beginning=0,
         fade_end=0,
-        random_interval=[],
-        random_volume=[],
+        random_interval_min=0,
+        random_interval_max=10,
+        random_volume_min=0,
+        random_volume_max=100,
     ):
         self.__mono_stereo = mono_stereo
         self.__interval = interval
         self.__volume = volume
         self.__fade_beginning = fade_beginning
         self.__fade_end = fade_end
-        self.__random_interval = random_interval
-        self.__random_volume = random_volume
+        self.__random_interval_max = random_interval_max
+        self.__random_interval_min = random_interval_min
+        self.__random_volume_max = random_volume_max
+        self.__random_volume_min = random_volume_min
         self.__switch = "off"
 
     __tablename__ = "configuration"
@@ -30,6 +34,10 @@ class Configuration(base):
     db_volume = Column("volume", Integer)
     db_fade_beginning = Column("fade_beginning", Integer)
     db_fade_end = Column("fade_end", Integer)
+    db_random_interval_max = Column("random_interval_max", Integer)
+    db_random_interval_min = Column("random_interval_min", Integer)
+    db_random_volume_max = Column("random_volume_max", Integer)
+    db_random_volume_min = Column("random_volume_min", Integer)
     db_track_id = Column(Integer, ForeignKey("track.id"))
 
     def associate_database_variables(self):
@@ -38,6 +46,10 @@ class Configuration(base):
         self.db_volume = self.__volume
         self.db_fade_beginning = self.__fade_beginning
         self.db_fade_end = self.__fade_end
+        self.db_random_interval_max = self.__random_interval_max
+        self.db_random_interval_min = self.__random_interval_min
+        self.db_random_volume_max = self.__random_volume_max
+        self.db_random_volume_min = self.__random_volume_min
 
     @property
     def mono_stereo(self):

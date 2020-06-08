@@ -8,7 +8,8 @@ import time
 from amb.src.entities.configuration import Configuration
 from pathlib import Path
 from time import sleep
-#from amb.src.entities.configuration import Configuration
+
+# from amb.src.entities.configuration import Configuration
 from amb.src.facades.track_facade import *
 
 # Needs updates after database setup
@@ -19,7 +20,6 @@ class EffectController:
     def __init__(self, track_list):
         self.__track_list = track_list
         self.__channels = len(track_list) * 2
-        print(f"Channels: {self.__channels}")
         pygame.mixer.init(channels=self.__channels)
         pygame.mixer.set_num_channels(10)
 
@@ -27,10 +27,9 @@ class EffectController:
         """[Plays all tracks from the list of tracks defined when instantiating the EffectController]
         """
         for track in self.__track_list:
-            self.load_track(track)
-            (lambda t: self._play_single(t))(track)
+            (lambda t: self.play_single(t))(track)
 
-    def _play_single(self, track):
+    def play_single(self, track):
         """[Plays the track in question. This the functionality used by the 'play_all' function. Checks for fades, intervals, loops, etc.]
 
         :param interval: [Integer]
@@ -43,6 +42,9 @@ class EffectController:
         :type duration: [type]
         """
 
+        if pygame.mixer.Channel(track.channel).get_busy():
+            pygame.mixer.Channel(track.channel).stop()
+            return
 
         c = read(Configuration, Configuration.db_track_id, track.id)
 
@@ -53,37 +55,30 @@ class EffectController:
 
         repeatable = interval
         fade_in_modified = fade_in
+
+        p = str(
+            Path(f"{AUDIO_DIR}\{track.db_genre}\{track.db_name}.{track.db_extension}")
+        )
+        s = pygame.mixer.Sound(p)
+
         if fade_in != 0:
             fade_modified = (fade_in / 100) * duration
-        if interval != -1 or interval != 1 and type(interval) == list:
-            first = True
-            while True:
-                r0 = interval[0]
-                r1 = interval[1]
-                r_interval = random.randint(r0, r1)
-                concat = r_interval
-                if first == False:
-                    concat = concat + pygame.music.get_length()
-                time.sleep(concat)
-                pygame.music.play(fade_ms=fade_modified)
-        elif interval == 1:
-            pygame.mixer.music.play(fade_ms=fade_modified)
+        if interval == "random":
+            self.recursive_play(track, s)
+        elif interval == "single":
+            pygame.mixer.Channel(track.channel).play(s)
         else:
-            print("playing loops")
-            # pygame.mixer.music.play(loops=interval)
-            p = str(Path(f"{AUDIO_DIR}\{track.db_genre}\{track.db_name}.{track.db_extension}"))
-            s = pygame.mixer.Sound(p)
-            s.play()
-            print(track.channel)
-            pygame.mixer.Channel(track.channel).play(s, loops=interval)
+            # s.play()
+            pygame.mixer.Channel(track.channel).play(s, loops=-1)
+
+    # Needs extended database..
+    def recursive_play(self, track, sound, first=False):
+        r_interval = random.randint(r0, r1)
+        concat = r_interval
+        time.sleep(track.duration + random)
+        pygame.music.play(fade_ms=fade_modified)
 
     def control_mono_stereo(self,):
-        raise NotImplementedError
-
-    def _stereo(self,):
-        raise NotImplementedError
-
-    def _mono(self,):
         raise NotImplementedError
 
     def control_volume(self, c):
@@ -99,36 +94,16 @@ class EffectController:
         else:
             return volume
 
-    def _volume_random(self,):
-        raise NotImplementedError
-
-    def _volume_single(self,):
-        raise NotImplementedError
-
-    def _volume_mute(self,):
-        raise NotImplementedError
-
     def control_interval(self, c):
         interval = c.db_interval
         if interval == "loop":
-            return -1
+            return "loop"
         elif interval == "single":
-            return 1
+            return "single"
         elif interval == "random":
-            raise NotImplementedError
+            raise "random"
         else:
-            raise ValueError(
-                f"Illegal interval in control_interval: {interval}"
-            )
-
-    def _interval_random(self,):
-        raise NotImplementedError
-
-    def _interval_loop(self,):
-        raise NotImplementedError
-
-    def _interval_single(self,):
-        raise NotImplementedError
+            raise ValueError(f"Illegal interval in control_interval: {interval}")
 
     def unload_all(self,):
         pygame.mixer.music.unload()
@@ -150,7 +125,9 @@ class EffectController:
 
     def load_track(self, track):
         print("loading...")
-        track_path = Path(f"{AUDIO_DIR}\{track.db_genre}\{track.db_name}.{track.db_extension}")
+        track_path = Path(
+            f"{AUDIO_DIR}\{track.db_genre}\{track.db_name}.{track.db_extension}"
+        )
 
         if not Path.is_file(Path(track_path)):
             print(f"failed track path: {track_path}")

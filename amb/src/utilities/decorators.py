@@ -29,15 +29,14 @@ def session_handler(func):
 
         elif func.__name__ == "read_all":
             search = args[0]
-            #search = type(search).__name__
-            #search = search.lower()
             res = session.query(search).all()
             return func(search=res)
 
         elif func.__name__ == "update":
-            entity = arg[0]
+            entity = args[0]
+            session.merge(entity)
             session.commit()
-            func(*args, entity=entity)
+            func(entity=entity)
 
         elif func.__name__ == "delete":
             search = args[0]

@@ -38,15 +38,6 @@ class Track(base):
         self.db_configuration = self.__configuration
 
     @staticmethod
-    def get_property_count():
-        """[Returns amount of object properties]
-
-        :return: [Amount of variabes]
-        :rtype: [int]
-        """
-        return 5
-
-    @staticmethod
     def get_track_attribute_name_by_index(index):
         return ["mono_stereo", "Interval", "Volume"][index - 1]
 

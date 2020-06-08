@@ -8,6 +8,9 @@ from amb.src.entities.track import Track
 from pathlib import Path
 from amb.definitions import AUDIO_DIR
 from shutil import copyfile
+from amb.src.audio_handling.audio_utilities import get_audio_length
+from amb.src.entities.configuration import Configuration
+from amb.src.facades.track_facade import create
 
 
 def picklify_object_list(data):
@@ -28,12 +31,34 @@ def clean_up_files():
     Path.rmdir(Path(TEMP_DIR))
 
 
-# Connect with database logic
+def add_to_database(path, genre):
 
+    split = path.split("\\")[-1]
+    split = split.split(".")
 
+    name = split[0]
+    extension = split[1]
+    print(path)
+    print(path)
+    print(path)
+    print(path)
+    print(path)
+    print(path)
+    duration = get_audio_length(path)
 
-#def link_track_params_to_directory(track):
-#    _create_missing_genre_dirs(track)
+    c = Configuration()
+    t = Track(name, genre, duration, c, extension=extension)
+    is_file_in_audio_folder(path, t)
+
+    print("adding track to database ...")
+
+    c.associate_database_variables()
+    create(c)
+
+    t.associate_database_variables()
+    create(t)
+
+    print("\nOK")
 
 
 def is_file_in_audio_folder(old_path, track):
@@ -49,13 +74,15 @@ def is_file_in_audio_folder(old_path, track):
         if not path_genre.is_dir():
             print(f"{track.genre} was not a genre. Creating directory..")
             Path.mkdir(path_genre)
-            print("copying file...")
-            try:
-                copyfile(str(old_path),str(path_audio))
-            except Exception as err:
-                print("Error when copying file: ")
-                print(err)
+        print("copying file...")
+        try:
+            copyfile(str(old_path), str(path_audio))
+        except Exception as err:
+            print("Error when copying file: ")
+            print(err)
 
+
+# Possibly deprecated
 def create_missing_genre_dirs(track):
     """[Audio subdirectories and the storage of the tracks, are categorized by their genre. This function generates missing directories, in case there is no directory representing the genre of a track]
 
@@ -67,5 +94,3 @@ def create_missing_genre_dirs(track):
     if not genre_path.is_dir():
         print(f"{genre_path} was not a genre. Creating directory..")
         path.mkdir(genre_path)
-
-
