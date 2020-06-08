@@ -8,6 +8,7 @@ import time
 from amb.src.entities.configuration import Configuration
 from pathlib import Path
 from time import sleep
+import threading
 
 # from amb.src.entities.configuration import Configuration
 from amb.src.facades.track_facade import *
@@ -21,7 +22,7 @@ class EffectController:
         self.__track_list = track_list
         self.__channels = len(track_list) * 2
         pygame.mixer.init(channels=self.__channels)
-        pygame.mixer.set_num_channels(10)
+        pygame.mixer.set_num_channels(self.__channels)
 
     def play_all(self):
         """[Plays all tracks from the list of tracks defined when instantiating the EffectController]
@@ -53,6 +54,8 @@ class EffectController:
         volume = self.control_volume(c)
         duration = track.db_duration
 
+        pygame.mixer.Channel(track.channel).set_volume(volume)
+
         repeatable = interval
         fade_in_modified = fade_in
 
@@ -64,7 +67,7 @@ class EffectController:
         if fade_in != 0:
             fade_modified = (fade_in / 100) * duration
         if interval == "random":
-            self.recursive_play(track, s)
+            self.recursive_play(track, c, s)
         elif interval == "single":
             pygame.mixer.Channel(track.channel).play(s)
         else:
@@ -72,11 +75,22 @@ class EffectController:
             pygame.mixer.Channel(track.channel).play(s, loops=-1)
 
     # Needs extended database..
-    def recursive_play(self, track, sound, first=False):
-        r_interval = random.randint(r0, r1)
-        concat = r_interval
-        time.sleep(track.duration + random)
-        pygame.music.play(fade_ms=fade_modified)
+    def recursive_play(self, track, c, sound, first=False):
+        r_interval = random.randint(c.db_random_interval_min, c.db_random_interval_max)
+        # timer = None
+        timer = None
+
+        def r_play():
+            global timer
+            r_interval = random.randint(
+                c.db_random_interval_min, c.db_random_interval_max
+            )
+            timer = threading.Timer(track.db_duration + r_interval, r_play)
+            pygame.mixer.Channel(track.channel).play(sound)
+            timer.start()
+
+        timer = threading.Timer(r_interval, r_play)
+        timer.start()
 
     def control_mono_stereo(self,):
         raise NotImplementedError
@@ -84,7 +98,13 @@ class EffectController:
     def control_volume(self, c):
         volume = "0"
         try:
-            volume = float(c.db_volume) / 100
+            if c.db_vol_random == True:
+                volume = (
+                    random.randint(c.db_random_interval_min, c.db_random_interval_max)
+                    / 100
+                )
+            else:
+                volume = float(c.db_volume) / 100
         except Exception as err:
             print(f"Failed to convert volume to float. Was {volume} Err: \n {err}")
         if volume > 1:
@@ -101,7 +121,7 @@ class EffectController:
         elif interval == "single":
             return "single"
         elif interval == "random":
-            raise "random"
+            return "random"
         else:
             raise ValueError(f"Illegal interval in control_interval: {interval}")
 
@@ -132,7 +152,6 @@ class EffectController:
         if not Path.is_file(Path(track_path)):
             print(f"failed track path: {track_path}")
             raise FileNotFoundError()
-        print(track_path)
         pygame.mixer.music.load(str(track_path))
         # clock = pygame.time.Clock()
         # clock.tick(10)

@@ -1,5 +1,5 @@
 from amb.src.connection.engine_creation import main_base as base, main_engine
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
 
@@ -9,6 +9,7 @@ class Configuration(base):
         mono_stereo="stereo",
         interval="loop",
         volume=100,
+        vol_random=False,
         fade_beginning=0,
         fade_end=0,
         random_interval_min=0,
@@ -19,19 +20,20 @@ class Configuration(base):
         self.__mono_stereo = mono_stereo
         self.__interval = interval
         self.__volume = volume
+        self.__vol_random = vol_random
         self.__fade_beginning = fade_beginning
         self.__fade_end = fade_end
         self.__random_interval_max = random_interval_max
         self.__random_interval_min = random_interval_min
         self.__random_volume_max = random_volume_max
         self.__random_volume_min = random_volume_min
-        self.__switch = "off"
 
     __tablename__ = "configuration"
     id = Column("id", Integer, primary_key=True)
     db_mono_stereo = Column("mono_stereo", String)
     db_interval = Column("interval", String)
     db_volume = Column("volume", Integer)
+    db_vol_random = Column("vol_random", Boolean)
     db_fade_beginning = Column("fade_beginning", Integer)
     db_fade_end = Column("fade_end", Integer)
     db_random_interval_max = Column("random_interval_max", Integer)
@@ -44,6 +46,7 @@ class Configuration(base):
         self.db_mono_stereo = self.__mono_stereo
         self.db_interval = self.__interval
         self.db_volume = self.__volume
+        self.db_vol_random = self.__vol_random
         self.db_fade_beginning = self.__fade_beginning
         self.db_fade_end = self.__fade_end
         self.db_random_interval_max = self.__random_interval_max

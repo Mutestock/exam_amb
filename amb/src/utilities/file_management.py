@@ -38,12 +38,6 @@ def add_to_database(path, genre):
 
     name = split[0]
     extension = split[1]
-    print(path)
-    print(path)
-    print(path)
-    print(path)
-    print(path)
-    print(path)
     duration = get_audio_length(path)
 
     c = Configuration()

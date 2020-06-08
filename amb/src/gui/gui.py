@@ -30,8 +30,9 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.popup import Popup
 from kivy.config import Config
+from distutils.util import strtobool
 
-Config.set("graphics", "width", "1200")
+Config.set("graphics", "width", "1500")
 Config.set("graphics", "height", "700")
 
 import math
@@ -63,18 +64,26 @@ class SelectableRecycleGridLayout(
     """ Adds selection and focus behaviour to the view. """
 
 
-class PlayAllButton(Button):
-    color_on = [0, 1, 0, 1]
-    color_off = [1, 0, 0, 1]
+class NewPlaylistButton(Button):
+    def on_press(self):
+        print("Not yet implemented")
 
+
+class LoadPlaylistButton(Button):
+    def on_press(self):
+        print("Not yet implemented")
+
+
+class SavePlaylistButton(Button):
+    def on_press(self):
+        print("Not yet implemented")
+
+
+class PlayAllButton(Button):
     def on_press(self):
         track_list = retrieve_pkl_object_list()
         ec = EffectController(track_list)
         ec.play_all()
-        if self.background_color != self.color_on:
-            self.background_color = self.color_on
-        else:
-            self.background_color = self.color_off
 
 
 class StopAllButton(Button):
@@ -127,7 +136,7 @@ class ToolBar(GridLayout):
 class SelectableButton(RecycleDataViewBehavior, Button):
     """ Add selection support to the Button """
 
-    track_object_size = 13
+    track_object_size = 14
     index = None
     selected = BooleanProperty(False)
     selectable = BooleanProperty(True)
@@ -147,8 +156,6 @@ class SelectableButton(RecycleDataViewBehavior, Button):
     def apply_selection(self, rv, index, is_selected):
         """ Respond to the selection of items in the view. """
         self.selected = is_selected
-        # if is_selected:
-        #    print(rv.data[index])
 
     def on_press(self):
         if self.index % self.track_object_size == self.track_object_size - 1:
@@ -160,34 +167,17 @@ class SelectableButton(RecycleDataViewBehavior, Button):
 
     def update_changes(self, txt):
         data = retrieve_pkl_object_list()
-        track_object_size = len(data[0].__dict__.values()) + 1
-
+        track_object_size = 14
         cell_nr = self.index
-        # row_nr = math.floor((cell_nr + 1) / track_object_size)
-
-        row_nr = math.floor(track_object_size / (cell_nr)) - 1
-        print(track_object_size / (cell_nr))
-        print(f"row: {row_nr}")
+        
+        
+        row_nr = math.floor(cell_nr / track_object_size)
         local_cell = (cell_nr + 1) % track_object_size
+        
 
         track = data[int(row_nr)]
 
         c = read(Configuration, Configuration.db_track_id, track.id)
-
-        # to_update={
-        #    1:track.db_name,
-        #    2:track.db_genre,
-        #    3:track.db_duration,
-        #    4:c.db_mono_stereo,
-        #    5:c.db_interval,
-        #    6:c.db_volume,
-        #    7:c.db_fade_beginning,
-        #    8:c.db_fade_end,
-        #    9:c.db_random_interval_max,
-        #    10:c.db_random_interval_min,
-        #    11:c.db_random_volume_max,
-        #    12:c.db_random_volume_max,
-        # }.get(local_cell)
 
         if local_cell == 4:
             c.db_mono_stereo = txt
@@ -196,21 +186,23 @@ class SelectableButton(RecycleDataViewBehavior, Button):
         elif local_cell == 6:
             c.db_volume = txt
         elif local_cell == 7:
-            c.db_fade_beginning = txt
+            c.db_vol_random = bool(strtobool(txt))
         elif local_cell == 8:
-            c.db_fade_end = txt
+            c.db_fade_beginning = txt
         elif local_cell == 9:
-            c.db_random_interval_max = txt
+            c.db_fade_end = txt
         elif local_cell == 10:
-            c.db_random_interval_min = txt
+            c.db_random_interval_max = txt
         elif local_cell == 11:
-            c.db_random_volume_max = txt
+            c.db_random_interval_min = txt
         elif local_cell == 12:
+            c.db_random_volume_max = txt
+        elif local_cell == 13:
             c.db_random_volume_min = txt
         else:
             pass
 
-        if local_cell > 3 and local_cell < 13:
+        if local_cell > 3 and local_cell < 14:
             update(c)
 
         # to_change = list(track.configuration.__dict__.keys())[local_cell]
@@ -230,10 +222,11 @@ def refreshed_track_data():
         c = read(Configuration, Configuration.db_track_id, track.id)
         data.append({"text": str(track.db_name)})
         data.append({"text": str(track.db_genre)})
-        data.append({"text": str(track.db_duration)})
+        data.append({"text": str(math.floor(track.db_duration * 100) / 100.0)})
         data.append({"text": str(c.db_mono_stereo)})
         data.append({"text": str(c.db_interval)})
         data.append({"text": str(c.db_volume)})
+        data.append({"text": str(c.db_vol_random)})
         data.append({"text": str(c.db_fade_beginning)})
         data.append({"text": str(c.db_fade_end)})
         data.append({"text": str(c.db_random_interval_max)})
@@ -246,7 +239,7 @@ def refreshed_track_data():
 
 class RV(BoxLayout):
     data_items = ListProperty([])
-    track_object_size = 13
+    track_object_size = 14
 
     def __init__(self, **kwargs):
         super(RV, self).__init__(**kwargs)
@@ -254,12 +247,15 @@ class RV(BoxLayout):
 
     def get_tracks(self):
         track_list = [track for track in read_all(Track)]
+        p_list = []
+
         for i, track in enumerate(track_list):
             track.channel = i * 2
-
         # Delete after db
+
         if not (Path.is_dir(Path(TEMP_DIR))):
             picklify_object_list(track_list)
+
         # decoded_list = retrieve_pkl_object_list()
         for track in track_list:
             c = read(Configuration, Configuration.db_track_id, track.id)
@@ -269,6 +265,7 @@ class RV(BoxLayout):
             self.data_items.append(c.db_mono_stereo)
             self.data_items.append(c.db_interval)
             self.data_items.append(c.db_volume)
+            self.data_items.append(c.db_vol_random)
             self.data_items.append(c.db_fade_beginning)
             self.data_items.append(c.db_fade_end)
             self.data_items.append(c.db_random_interval_max)

@@ -1,5 +1,6 @@
 from amb.src.connection.db_management import base
 from sqlalchemy import Column, Integer, String
+from amb.src.connection.engine_creation import main_base as base, main_engine
 from sqlalchemy.orm import relationship
 
 
@@ -19,7 +20,10 @@ class User(base):
     id = Column("id", Integer, primary_key=True)
     db_name = Column("name", String, unique=True)
     db_password = Column("password", String)
-    db_playlist = relationship("Playlist", cascade="all, delete, delete-orphan")
+    # db_playlist = relationship("Playlist", cascade="all, delete, delete-orphan")
+    db_playlist = relationship(
+        "Playlist", uselist=False, backref="user", cascade="all, delete, delete-orphan",
+    )
 
     @property
     def name(self):
@@ -44,3 +48,6 @@ class User(base):
     @play_lists.setter
     def play_lists(self, value):
         self.__play_lists = value
+
+
+base.metadata.create_all(bind=main_engine)
